@@ -14,7 +14,7 @@ paths:
     parameters:
       - $ref: '#/components/parameters/quotingCaseId'
     post:
-      operationId: uploadFile
+      operationId: uploadReplyForm
       requestBody:
         required: true
         content:
@@ -32,7 +32,7 @@ paths:
               format: binary
       responses:
         '200':
-          description: upload file
+          description: upload reply form
           content:
             application/json:
               schema:

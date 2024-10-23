@@ -7,9 +7,9 @@ package struct APIHandler: APIProtocol {
 
     package init() {}
     
-    package func uploadFile(_ input: Operations.uploadFile.Input) async throws -> Operations.uploadFile.Output {
+    package func uploadReplyForm(_ input: Operations.uploadReplyForm.Input) async throws -> Operations.uploadReplyForm.Output {
         let quotingCaseId = input.path.quotingCaseId
-        var response: Operations.uploadFile.Output 
+        var response: Operations.uploadReplyForm.Output 
         switch input.body {
         case let .jpeg(body):
             response = try await upload(body: body, name: "\(quotingCaseId).jpg", contentType: "image/jpeg")
@@ -21,7 +21,7 @@ package struct APIHandler: APIProtocol {
         return response
     }
 
-    func upload(body: (HTTPBody), name: String, contentType: String) async throws -> Operations.uploadFile.Output {
+    func upload(body: (HTTPBody), name: String, contentType: String) async throws -> Operations.uploadReplyForm.Output {
         let eventLoopGroup = MultiThreadedEventLoopGroup(numberOfThreads: 1)
         let httpClient = HTTPClient(eventLoopGroupProvider: .shared(eventLoopGroup), configuration: .init(ignoreUncleanSSLShutdown: true))
         do {

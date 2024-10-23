@@ -9,7 +9,7 @@ let package = Package(
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
             name: "FileStorageContext",
-            targets: ["FileUploader"]),
+            targets: ["GoogleCloudStorage"]),
         .executable(
             name: "FileStorageContextServer",
             targets: ["FileStorageContextServer"]),
@@ -25,7 +25,7 @@ let package = Package(
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
-            name: "FileUploader",
+            name: "GoogleCloudStorage",
             dependencies: [
                 .product(name: "OpenAPIRuntime", package: "swift-openapi-runtime"),
                 .product(name: "GoogleCloudKit", package: "google-cloud-kit")
@@ -39,13 +39,13 @@ let package = Package(
         .executableTarget(
             name: "FileStorageContextServer",
             dependencies: [
-                "FileUploader",
+                "GoogleCloudStorage",
                 .product(name: "OpenAPIHummingbird", package: "swift-openapi-hummingbird"),
                 .product(name: "Hummingbird", package: "hummingbird"),
             ]
         ),
         .testTarget(
             name: "FileStorageContextTests",
-            dependencies: ["FileUploader"]),
+            dependencies: ["GoogleCloudStorage"]),
     ]
 )
