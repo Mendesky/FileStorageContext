@@ -7,7 +7,7 @@ import NIO
 struct Config {
     let projectId = ProcessInfo.processInfo.environment["GCS_PROJECT_ID"] ?? "ai-jiabao-com"
     let bucket = ProcessInfo.processInfo.environment["GCS_BUCKET"] ?? "mendesky"
-    let credentialsFile = ProcessInfo.processInfo.environment["GCS_CREDENTIALSFILE"] ?? "/home/suling/.jw_loader/credentials/gs/ai-jiabao-com-jw_storage.json"
+    let credentialsFile = ProcessInfo.processInfo.environment["GCS_CREDENTIALSFILE"] ?? ""
 }
 
 func uploadToGoogleCloudStorage(httpClient: HTTPClient, eventLoopGroup: MultiThreadedEventLoopGroup, data: Data, name: String, contentType: String) async throws -> String? {
