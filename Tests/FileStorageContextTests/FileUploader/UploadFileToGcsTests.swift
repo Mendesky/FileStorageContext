@@ -1,4 +1,4 @@
-@testable import UploadFile
+@testable import FileUploader
 import XCTest
 
 
