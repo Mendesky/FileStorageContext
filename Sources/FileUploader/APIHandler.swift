@@ -9,17 +9,16 @@ package struct APIHandler: APIProtocol {
     
     package func uploadFile(_ input: Operations.uploadFile.Input) async throws -> Operations.uploadFile.Output {
         let quotingCaseId = input.path.quotingCaseId
+        var response: Operations.uploadFile.Output 
         switch input.body {
         case let .jpeg(body):
-            let response = try await upload(body: body, name: "\(quotingCaseId).jpg", contentType: "image/jpeg")
-            return response
+            response = try await upload(body: body, name: "\(quotingCaseId).jpg", contentType: "image/jpeg")
         case let .png(body):
-            let response = try await upload(body: body, name: "\(quotingCaseId).png", contentType: "image/png")
-            return response
+            response = try await upload(body: body, name: "\(quotingCaseId).png", contentType: "image/png")
         case let .pdf(body):
-            let response = try await upload(body: body, name: "\(quotingCaseId).pdf", contentType: "application/pdf")
-            return response
+            response = try await upload(body: body, name: "\(quotingCaseId).pdf", contentType: "application/pdf")
         }
+        return response
     }
 
     func upload(body: (HTTPBody), name: String, contentType: String) async throws -> Operations.uploadFile.Output {

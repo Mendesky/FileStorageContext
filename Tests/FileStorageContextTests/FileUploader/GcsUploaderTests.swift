@@ -2,7 +2,11 @@
 import XCTest
 
 
-final class UploadFileToGcsAPITests: XCTestCase {
+final class GcsUploaderAPITests: XCTestCase {
+
+    override func setUp() {
+        setenv("GCS_CREDENTIALSFILE", "/home/suling/.jw_loader/credentials/gs/ai-jiabao-com-jw_storage.json", 1)
+    }
     
     func testUploadFileToGcs() async throws {
         let quotingCaseId = UUID().uuidString
