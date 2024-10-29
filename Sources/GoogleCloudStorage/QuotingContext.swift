@@ -15,6 +15,6 @@ func uploadToGoogleCloudStorage(httpClient: HTTPClient, eventLoopGroup: MultiThr
     let credentialsConfiguration = try GoogleCloudCredentialsConfiguration(projectId: config.projectId, credentialsFile: config.credentialsFile)
     let cloudStorageConfiguration: GoogleCloudStorageConfiguration = .default()
     let gcs = try GoogleCloudStorageClient(credentials: credentialsConfiguration, storageConfig: cloudStorageConfiguration, httpClient: httpClient, eventLoop: eventLoopGroup.next())
-    let object = try await gcs.object.createSimpleUpload(bucket: config.bucket, data: data, name: name, contentType: contentType).wait()
+    let object = try await gcs.object.createSimpleUpload(bucket: config.bucket, data: data, name: name, contentType: contentType).get()
     return object.mediaLink
 }
