@@ -39,11 +39,10 @@ RUN apt-get update && apt-get install -y \
 
 # Copy Service Account Key (replace the path with your key file path if needed)
 # Note: Ensure the key.json file is added during build time or passed securely.
-COPY /Users/donggicai1991/Documents/einvoice/key/limit-storage/ai-jiabao-com-jw_storage.json /app/key.json
+COPY ./ai-jiabao-com-jw_storage.json /app/key.json
 
 # Set GOOGLE_APPLICATION_CREDENTIALS environment variable
-ENV GOOGLE_APPLICATION_CREDENTIALS="/app/key.json"
-RUN gcloud auth activate-service-account --key-file=/app/key.json
+ENV GCS_CREDENTIALSFILE="/app/key.json"
 
 # set up the app folder
 WORKDIR /app
