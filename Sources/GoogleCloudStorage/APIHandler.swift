@@ -1,6 +1,8 @@
 import Foundation
+import Hummingbird
 import OpenAPIRuntime
 import AsyncHTTPClient
+import Hummingbird
 import NIO
 
 package struct APIHandler: APIProtocol {
@@ -31,6 +33,7 @@ package struct APIHandler: APIProtocol {
             let data = try await body.reduce(into: Data()) { partialResult, bytes in
                 partialResult.append(contentsOf: bytes)
             }
+            let mediaLink = try await uploadToGoogleCloudStorage(httpClient: httpClient, eventLoopGroup: eventLoopGroup, data: data, name: name, contentType: contentType)
             try await httpClient.shutdown()
             return .ok(.init(body: .json(.init(mediaLink: mediaLink))))
         } catch {
