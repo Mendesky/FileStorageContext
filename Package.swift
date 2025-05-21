@@ -5,6 +5,9 @@ import PackageDescription
 
 let package = Package(
     name: "FileStorageContext",
+    platforms: [
+        .macOS(.v14)
+    ],
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
@@ -17,8 +20,8 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/apple/swift-openapi-generator", from: "1.0.0"),
         .package(url: "https://github.com/apple/swift-openapi-runtime", from: "1.0.0"),
-        .package(url: "https://github.com/swift-server/swift-openapi-hummingbird", from: "1.0.0"),
-        .package(url: "https://github.com/hummingbird-project/hummingbird", from: "1.10.1"),
+        .package(url: "https://github.com/swift-server/swift-openapi-hummingbird.git", from: "2.0.1"),
+        .package(url: "https://github.com/hummingbird-project/hummingbird.git", from: "2.14.0"),
         .package(url: "https://github.com/vapor-community/google-cloud-kit.git", from: "1.0.0-alpha.1")
     ],
     targets: [
@@ -41,7 +44,7 @@ let package = Package(
             dependencies: [
                 "GoogleCloudStorage",
                 .product(name: "OpenAPIHummingbird", package: "swift-openapi-hummingbird"),
-                .product(name: "Hummingbird", package: "hummingbird"),
+                .product(name: "Hummingbird", package: "hummingbird")
             ]
         ),
         .testTarget(
