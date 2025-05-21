@@ -8,25 +8,29 @@ package struct APIHandler: APIProtocol {
     package init() {}
     
     package func uploadReplyForm(_ input: Operations.uploadReplyForm.Input) async throws -> Operations.uploadReplyForm.Output {
+        
         let quotingCaseId = input.path.quotingCaseId
-        var response: Operations.uploadReplyForm.Output 
-        switch input.body {
+        let wrapped: (body: HTTPBody, fileName: String, contentType: String) = switch input.body {
         case let .jpeg(body):
-            response = try await upload(body: body, name: "\(quotingCaseId).jpg", contentType: "image/jpeg")
+            (body, "\(quotingCaseId).jpg", "image/jpeg")
         case let .png(body):
-            response = try await upload(body: body, name: "\(quotingCaseId).png", contentType: "image/png")
+            (body, "\(quotingCaseId).png", "image/png")
         case let .pdf(body):
-            response = try await upload(body: body, name: "\(quotingCaseId).pdf", contentType: "application/pdf")
+            (body, "\(quotingCaseId).pdf", "application/pdf")
         }
-        return response
+
+        return try await upload(body: wrapped.body, name: wrapped.fileName, contentType: wrapped.contentType)
     }
 
     func upload(body: (HTTPBody), name: String, contentType: String) async throws -> Operations.uploadReplyForm.Output {
+        
         let eventLoopGroup = MultiThreadedEventLoopGroup(numberOfThreads: 1)
         let httpClient = HTTPClient(eventLoopGroupProvider: .shared(eventLoopGroup), configuration: .init(ignoreUncleanSSLShutdown: true))
         do {
-            let bytes: [UInt8] = try await body.reduce(.init()) { $0 + $1 }
-            let mediaLink = try await uploadToGoogleCloudStorage(httpClient: httpClient, eventLoopGroup: eventLoopGroup, data: Data(bytes), name: name, contentType: contentType)
+            
+            let data = try await body.reduce(into: Data()) { partialResult, bytes in
+                partialResult.append(contentsOf: bytes)
+            }
             try await httpClient.shutdown()
             return .ok(.init(body: .json(.init(mediaLink: mediaLink))))
         } catch {
