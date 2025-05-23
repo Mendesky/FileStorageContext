@@ -29,11 +29,7 @@ package struct APIHandler: APIProtocol {
         let eventLoopGroup = MultiThreadedEventLoopGroup(numberOfThreads: 1)
         let httpClient = HTTPClient(eventLoopGroupProvider: .shared(eventLoopGroup), configuration: .init(ignoreUncleanSSLShutdown: true))
         do {
-            
-            let data = try await body.reduce(into: Data()) { partialResult, bytes in
-                partialResult.append(contentsOf: bytes)
-            }
-            let mediaLink = try await uploadToGoogleCloudStorage(httpClient: httpClient, eventLoopGroup: eventLoopGroup, data: data, name: name, contentType: contentType)
+            let mediaLink = try await uploadToGoogleCloudStorage(httpClient: httpClient, eventLoopGroup: eventLoopGroup, data: .init(collecting: body, upTo: .max), name: name, contentType: contentType)
             try await httpClient.shutdown()
             return .ok(.init(body: .json(.init(mediaLink: mediaLink))))
         } catch {
