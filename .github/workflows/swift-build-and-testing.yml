@@ -32,7 +32,7 @@ jobs:
         with:
             ssh-private-key: |
                   ${{ secrets.DDDKIT_ACCESS_TOKEN }}      
-      - run: sh ./scripts/create_projection.sh
+      # - run: sh ./scripts/create_projection.sh
       - run: ulimit -n 10000
       - name: Build and tests
         run: swift test -v --enable-code-coverage --no-parallel
