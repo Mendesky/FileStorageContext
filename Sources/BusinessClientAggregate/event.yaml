@@ -1,0 +1,11 @@
+BusinessClientCreated:
+  kind: createdEvent
+  aggregateRootId:
+    alias: businessClientId
+  properties:
+    customerId: String, 0
+
+BusinessClientDeleted:
+  kind: deletedEvent
+  aggregateRootId:
+    alias: businessClientId
