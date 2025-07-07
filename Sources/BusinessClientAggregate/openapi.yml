@@ -1,0 +1,62 @@
+openapi: '3.1.0'
+info:
+  title: FileStorageContextServer
+  version: 0.0.0
+servers:
+  - url: http://{host}:{port}/file-storage-context
+    variables:
+      host:
+        default: 127.0.0.1
+      port:
+        default: "13579"
+        
+paths:
+  /business-clients:
+    post:
+      operationId: createBusinessClient
+      parameters:
+        - $ref: '#/components/parameters/userId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - customerId
+              properties:
+                customerId:
+                  type: string
+      responses:
+        '201':
+          description: Business client created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BusinessClientId'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailableError'
+
+
+
+components:
+  schemas:
+    BusinessClientId:
+      type: object
+      properties:
+        businessClientId:
+          type: string
+
+  parameters:
+    userId:
+      name: userId
+      in: header
+      description: user id to fetch
+      required: true
+      schema:
+        type: string
+
+  responses:
+    ServiceUnavailableError:
+      description: Service Unavailable (e.g. EventStore error)
+      content:
+        application/json: {}
