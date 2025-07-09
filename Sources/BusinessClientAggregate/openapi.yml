@@ -36,8 +36,56 @@ paths:
         '503':
           $ref: '#/components/responses/ServiceUnavailableError'
 
-
-
+  /business-clients/{businessClientId}/upload-profitseeking-enterprise-annual-income-tax-return-document:
+    post:
+      operationId: uploadProfitseekingEnterpriseAnnualIncomeTaxReturnDocument
+      parameters:
+        - $ref: '#/components/parameters/businessClientId'
+        - $ref: '#/components/parameters/userId'
+        - $ref: '#/components/parameters/contentType'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+                - customerId
+                - year
+              properties:
+                file:
+                  type: string
+                  format: binary
+                customerId:
+                  type: string
+                year:
+                  type: number
+                  format: double
+            encoding:
+              customerId:
+                contentType: application/json
+              year:
+                contentType: application/json
+             
+                
+      responses:
+        '200':
+          description: upload ProfitseekingEnterpriseAnnualIncomeTaxReturnDocument successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - documentId
+                properties:
+                  documentId:
+                    type: string
+                  mediaLink:
+                    type: string
+        '503':
+          $ref: '#/components/responses/ServiceUnavailableError'
+                
 components:
   schemas:
     BusinessClientId:
@@ -47,6 +95,13 @@ components:
           type: string
 
   parameters:
+    businessClientId:
+      name: businessClientId
+      in: path
+      required: true
+      schema:
+        type: string
+        
     userId:
       name: userId
       in: header
@@ -54,6 +109,18 @@ components:
       required: true
       schema:
         type: string
+        
+    contentType:
+      name: contentType
+      in: header
+      description: file content type
+      required: true
+      schema:
+        type: string
+        enum:
+          - jpeg
+          - png
+          - pdf
 
   responses:
     ServiceUnavailableError:

@@ -2,6 +2,8 @@ import Foundation
 import Testing
 import EventStoreDB
 import SharedTestUtility
+import AsyncHTTPClient
+import NIO
 @testable import BusinessClientAggregate
  
 
@@ -27,7 +29,10 @@ struct CreateBusinessClientApiTests {
         let customerId = "testCustomerId"
         let userId = "testUserId"
         
-        let handler = ApiHandler(esdbClient: esdbClient)
+        let eventLoopGroup = MultiThreadedEventLoopGroup(numberOfThreads: 1)
+        let httpClient = HTTPClient(eventLoopGroupProvider: .shared(eventLoopGroup), configuration: .init(ignoreUncleanSSLShutdown: true))
+        let uploader = GcsUploader(eventLoopGroup: eventLoopGroup, httpClient: httpClient)
+        let handler = ApiHandler(esdbClient: esdbClient, uploader: uploader)
         let response = try await handler.createBusinessClient(headers: .init(userId: userId), body: .json(.init(customerId: customerId)))
         
         let businessClientId = try #require(response.created.body.json.businessClientId)
