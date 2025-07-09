@@ -9,3 +9,11 @@ BusinessClientDeleted:
   kind: deletedEvent
   aggregateRootId:
     alias: businessClientId
+
+ProfitseekingEnterpriseAnnualIncomeTaxReturnDocumentUploaded:
+  kind: domainEvent
+  aggregateRootId:
+    alias: businessClientId
+  properties:
+    documentId: String, 0
+    year: Date, 1

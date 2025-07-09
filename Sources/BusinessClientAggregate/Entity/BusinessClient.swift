@@ -8,6 +8,7 @@ package class BusinessClient: BusinessClientAggregateProtocol {
     
     package let id: String
     let customerId: String
+    var documents: [Document] = []
     
     init(id: String, customerId: String) {
         self.id = id
@@ -21,5 +22,9 @@ package class BusinessClient: BusinessClientAggregateProtocol {
         self.init(id: createdEvent.businessClientId, customerId: createdEvent.customerId)
         try apply(events: events)
         try clearAllDomainEvents()
+    }
+    
+    package func findDocument(byId documentId: String) -> Document? {
+        return self.documents.first { $0.id == documentId }
     }
 }
