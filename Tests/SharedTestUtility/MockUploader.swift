@@ -1,5 +1,5 @@
-@testable import BusinessClientAggregate
-import OpenAPIRuntime
+import Foundation
+import BusinessClientAggregate
 
 
 package final class MockUploader: Uploader {
@@ -10,7 +10,7 @@ package final class MockUploader: Uploader {
         self.mediaLink = mediaLink
     }
 
-    package func upload(body: (HTTPBody), name: String, contentType: String, limit: FileSizeLimit) async throws -> String? {
+    package func upload(data: Data, path: String, contentType: String, limit: FileSizeLimit) async throws -> String? {
         return mediaLink
     }
 }

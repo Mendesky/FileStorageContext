@@ -1,6 +1,7 @@
 import AsyncHTTPClient
 import OpenAPIRuntime
+import Foundation
 
-protocol Uploader: Sendable {
-    func upload(body: (HTTPBody), name: String, contentType: String, limit: FileSizeLimit) async throws -> String?
+package protocol Uploader: Sendable {
+    func upload(data: Data, path: String, contentType: String, limit: FileSizeLimit) async throws -> String?
 }

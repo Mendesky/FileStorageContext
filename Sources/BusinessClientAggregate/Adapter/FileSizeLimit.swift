@@ -1,4 +1,4 @@
-enum FileSizeLimit{
+package enum FileSizeLimit{
     case bytes(Int)
     case kb(Int)
     case mb(Int)

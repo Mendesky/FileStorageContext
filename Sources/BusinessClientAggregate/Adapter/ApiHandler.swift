@@ -8,7 +8,7 @@ package struct ApiHandler: APIProtocol {
     let esdbClient: EventStoreDBClient
     let uploader: Uploader
     
-    init(esdbClient: EventStoreDBClient, uploader: Uploader) {
+    package init(esdbClient: EventStoreDBClient, uploader: Uploader) {
         self.esdbClient = esdbClient
         self.uploader = uploader
     }
@@ -32,7 +32,7 @@ package struct ApiHandler: APIProtocol {
     package func uploadProfitseekingEnterpriseAnnualIncomeTaxReturnDocument(_ input: Operations.uploadProfitseekingEnterpriseAnnualIncomeTaxReturnDocument.Input) async throws -> Operations.uploadProfitseekingEnterpriseAnnualIncomeTaxReturnDocument.Output {
         let businessClientId = input.path.businessClientId
         let userId = input.headers.userId
-        let wrapped: (contentType: String, ext: String) = switch input.headers.contentType {
+        let wrapped: (fileType: String, ext: String) = switch input.headers.fileType {
         case .jpeg:
             ("image/jpeg", "jpg")
         case .pdf:
@@ -40,20 +40,20 @@ package struct ApiHandler: APIProtocol {
         case .png:
             ("image/png", "png")
         }
-        
         var customerId: String?
         var year: Date?
-        var fileData: HTTPBody?
+        var fileData: Data?
         switch input.body {
         case let .multipartForm(multipartBody):
             for try await part in multipartBody {
                 switch part {
                 case let .file(filePayload):
-                    fileData = filePayload.payload.body
-                case let .customerId(customerPayload):
-                    customerId = customerPayload.payload.body
-                case let .year(yearPayload):
-                    year = Date(timeIntervalSince1970: yearPayload.payload.body)
+                    fileData = try await filePayload.payload.body.reduce(into: Data()) { partialResult, byteChunk in
+                        partialResult.append(contentsOf: byteChunk.map(\.self))
+                    }
+                case let .meta(metaPayload):
+                    customerId = metaPayload.payload.body.customerId
+                    year = Date(timeIntervalSince1970: metaPayload.payload.body.year)
                 case .undocumented(_):
                     continue
                 }
@@ -72,7 +72,7 @@ package struct ApiHandler: APIProtocol {
         var mediaLink: String?
         do {
             let filePath = StoragePathGenerator.generate(customerId: customerId, documentType: .ProfitseekingEnterpriseAnnualIncomeTaxReturnDocument, documentId: documentId, ext: wrapped.ext)
-            mediaLink = try await self.uploader.upload(body: fileData, name: filePath, contentType: wrapped.contentType, limit: .mb(10))
+            mediaLink = try await self.uploader.upload(data: fileData, path: filePath, contentType: wrapped.fileType, limit: .mb(10))
         } catch {
             return .serviceUnavailable(.init(body: .json(.init(stringLiteral: "\(error)"))))
         }
