@@ -32,14 +32,9 @@ package struct ApiHandler: APIProtocol {
     package func uploadProfitseekingEnterpriseAnnualIncomeTaxReturnDocument(_ input: Operations.uploadProfitseekingEnterpriseAnnualIncomeTaxReturnDocument.Input) async throws -> Operations.uploadProfitseekingEnterpriseAnnualIncomeTaxReturnDocument.Output {
         let businessClientId = input.path.businessClientId
         let userId = input.headers.userId
-        let wrapped: (fileType: String, ext: String) = switch input.headers.fileType {
-        case .jpeg:
-            ("image/jpeg", "jpg")
-        case .pdf:
-            ("application/pdf", "pdf")
-        case .png:
-            ("image/png", "png")
-        }
+        let fileType = input.headers.fileType.wrapped.fileType
+        let ext = input.headers.fileType.wrapped.ext
+        
         var customerId: String?
         var year: Date?
         var fileData: Data?
@@ -71,8 +66,8 @@ package struct ApiHandler: APIProtocol {
         let documentId = UUID().uuidString
         var mediaLink: String?
         do {
-            let filePath = StoragePathGenerator.generate(customerId: customerId, documentType: .ProfitseekingEnterpriseAnnualIncomeTaxReturnDocument, documentId: documentId, ext: wrapped.ext)
-            mediaLink = try await self.uploader.upload(data: fileData, path: filePath, contentType: wrapped.fileType, limit: .mb(10))
+            let filePath = StoragePathGenerator.generate(customerId: customerId, documentType: .ProfitseekingEnterpriseAnnualIncomeTaxReturnDocument, documentId: documentId, ext: ext)
+            mediaLink = try await self.uploader.upload(data: fileData, path: filePath, contentType: fileType, limit: .mb(10))
         } catch {
             return .serviceUnavailable(.init(body: .json(.init(stringLiteral: "\(error)"))))
         }
