@@ -14,7 +14,6 @@ let package = Package(
             name: "FileStorageContext",
             targets: [
                 "BusinessClientAggregate",
-                "GoogleCloudStorage"
             ]
         ),
         .executable(
@@ -53,18 +52,6 @@ let package = Package(
             ]
         ),
         .target(
-            name: "GoogleCloudStorage",
-            dependencies: [
-                .product(name: "OpenAPIRuntime", package: "swift-openapi-runtime"),
-                .product(name: "GoogleCloudKit", package: "google-cloud-kit")
-            ],
-            resources: [.process("openapi-generator-config.yml"),
-                        .process("openapi.yml")],
-            plugins: [
-                .plugin(name: "OpenAPIGenerator", package: "swift-openapi-generator"),
-            ]
-        ),
-        .target(
             name: "SharedTestUtility",
             dependencies: [
                 "BusinessClientAggregate",
@@ -81,7 +68,7 @@ let package = Package(
         .executableTarget(
             name: "FileStorageContextServer",
             dependencies: [
-                "GoogleCloudStorage",
+                "BusinessClientAggregate",
                 .product(name: "OpenAPIHummingbird", package: "swift-openapi-hummingbird"),
                 .product(name: "Hummingbird", package: "hummingbird")
             ]

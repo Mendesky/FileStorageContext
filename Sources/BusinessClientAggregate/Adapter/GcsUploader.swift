@@ -18,19 +18,18 @@ package final class GcsUploader: Uploader {
     let httpClient: HTTPClient
     let config: Config
     
-    init(eventLoopGroup: EventLoopGroup, httpClient: HTTPClient) {
+    package init(eventLoopGroup: EventLoopGroup, httpClient: HTTPClient) {
         self.eventLoopGroup = eventLoopGroup
         self.httpClient = httpClient
         self.config = Config()
     }
     
-    func upload(body: (HTTPBody), name: String, contentType: String, limit: FileSizeLimit) async throws -> String? {
+    package func upload(data: Data, path: String, contentType: String, limit: FileSizeLimit) async throws -> String? {
         do {
             let credentialsConfiguration = try GoogleCloudCredentialsConfiguration(projectId: config.projectId, credentialsFile: config.credentialsFile)
             let cloudStorageConfiguration: GoogleCloudStorageConfiguration = .default()
             let gcs = try GoogleCloudStorageClient(credentials: credentialsConfiguration, storageConfig: cloudStorageConfiguration, httpClient: httpClient, eventLoop: eventLoopGroup.next())
-            let data = try await Data(collecting: body, upTo: limit.bytes)
-            let object = try await gcs.object.createSimpleUpload(bucket: config.bucket, data: data, name: name, contentType: contentType).get()
+            let object = try await gcs.object.createSimpleUpload(bucket: config.bucket, data: data, name: path, contentType: contentType).get()
             return object.mediaLink
         } catch {
             throw UploadError.uploadFailed(error: error)

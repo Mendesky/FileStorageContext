@@ -40,7 +40,7 @@ struct UploadProfitseekingEnterpriseAnnualIncomeTaxReturnDocumentApiTests {
         let uploader = MockUploader(mediaLink: mediaLink)
         let handler = ApiHandler(esdbClient: esdbClient, uploader: uploader)
         let bytes = [UInt8](repeating: 0, count: 1024)
-        let response = try await handler.uploadProfitseekingEnterpriseAnnualIncomeTaxReturnDocument(path: .init(businessClientId: businessClientId), headers: .init(userId: userId, contentType: .pdf), body: .multipartForm([.file(.init(payload: .init(body: HTTPBody(bytes)))), .customerId(.init(payload: .init(body: customerId))), .year(.init(payload: .init(body: year)))]))
+        let response = try await handler.uploadProfitseekingEnterpriseAnnualIncomeTaxReturnDocument(path: .init(businessClientId: businessClientId), headers: .init(userId: userId, fileType: .pdf), body: .multipartForm([.file(.init(payload: .init(body: HTTPBody(bytes)))), .meta(.init(payload: .init(body: .init(customerId: customerId, year: year))))]))
         
         let documentId = try #require(response.ok.body.json.documentId)
         #expect(try response.ok.body.json.mediaLink == mediaLink)
@@ -66,7 +66,7 @@ struct UploadProfitseekingEnterpriseAnnualIncomeTaxReturnDocumentApiTests {
         let handler = ApiHandler(esdbClient: esdbClient, uploader: uploader)
         let year: Double = 17564511100000.9
         let bytes = [UInt8](repeating: 0, count: 1024)
-        let response = try await handler.uploadProfitseekingEnterpriseAnnualIncomeTaxReturnDocument(path: .init(businessClientId: businessClientId), headers: .init(userId: userId, contentType: .pdf), body: .multipartForm([.file(.init(payload: .init(body: HTTPBody(bytes)))), .customerId(.init(payload: .init(body: customerId))), .year(.init(payload: .init(body: year)))]))
+        let response = try await handler.uploadProfitseekingEnterpriseAnnualIncomeTaxReturnDocument(path: .init(businessClientId: businessClientId), headers: .init(userId: userId, fileType: .pdf), body: .multipartForm([.file(.init(payload: .init(body: HTTPBody(bytes)))), .meta(.init(payload: .init(body: .init(customerId: customerId, year: year))))]))
         
         switch response {
             case let .serviceUnavailable(error):

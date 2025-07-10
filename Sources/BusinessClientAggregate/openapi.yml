@@ -42,7 +42,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/businessClientId'
         - $ref: '#/components/parameters/userId'
-        - $ref: '#/components/parameters/contentType'
+        - $ref: '#/components/parameters/fileType'
       requestBody:
         required: true
         content:
@@ -51,24 +51,27 @@ paths:
               type: object
               required:
                 - file
-                - customerId
-                - year
+                - meta
               properties:
                 file:
                   type: string
                   format: binary
-                customerId:
-                  type: string
-                year:
-                  type: number
-                  format: double
+                meta:
+                  type: object
+                  required:
+                    - customerId
+                    - year
+                  properties:
+                    customerId:
+                      type: string
+                    year:
+                      type: number
+                      format: double
             encoding:
-              customerId:
+              file:
+                contentType: application/pdf, image/jpeg, image/png
+              meta:
                 contentType: application/json
-              year:
-                contentType: application/json
-             
-                
       responses:
         '200':
           description: upload ProfitseekingEnterpriseAnnualIncomeTaxReturnDocument successfully
@@ -110,8 +113,8 @@ components:
       schema:
         type: string
         
-    contentType:
-      name: contentType
+    fileType:
+      name: fileType
       in: header
       description: file content type
       required: true
