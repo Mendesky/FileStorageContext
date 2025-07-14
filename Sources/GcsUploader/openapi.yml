@@ -11,9 +11,9 @@ servers:
         default: "13579"
         
 paths:
-  /upload-file-from-quoting-context:
+  /upload-to-gcs:
     post:
-      operationId: uploadFromQuotingContext
+      operationId: uploadToGcs
       parameters:
         - $ref: '#/components/parameters/fileContentType'
       requestBody:
@@ -33,9 +33,21 @@ paths:
                   type: object
                   required:
                     - customerId
+                    - documentType
                   properties:
                     customerId:
                       type: string
+                    documentType:
+                      type: string
+                      enum:
+                        - ProfitseekingEnterpriseAnnualIncomeTaxReturnDocument
+                        - BusinessTaxReturnDocument
+                        - BusinessClientRiskControlDocument
+                        - FinancialComplianceAuditDocument
+                        - TaxComplianceAuditDocument
+                        - QuotingProof
+                        - ReplyForm
+                        - NewBusinessClientRiskControlDocument
             encoding:
               file:
                 contentType: application/pdf, image/jpeg, image/png
