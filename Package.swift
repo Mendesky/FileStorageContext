@@ -13,7 +13,7 @@ let package = Package(
         .library(
             name: "FileStorageContext",
             targets: [
-                "BusinessClientAggregate",
+                "GcsUploader",
             ]
         ),
         .executable(
@@ -21,7 +21,6 @@ let package = Package(
             targets: ["FileStorageContextServer"]),
     ],
     dependencies: [
-        .package(url: "git@github.com:Mendesky/DDDKit.git", from: "1.2.0"),
         .package(url: "https://github.com/apple/swift-openapi-generator", from: "1.0.0"),
         .package(url: "https://github.com/apple/swift-openapi-runtime", from: "1.0.0"),
         .package(url: "https://github.com/swift-server/swift-openapi-hummingbird.git", from: "2.0.1"),
@@ -32,43 +31,29 @@ let package = Package(
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
-            name: "BusinessClientAggregate",
+            name: "GcsUploader",
             dependencies: [
-                .product(name: "DDDKit", package: "DDDKit"),
                 .product(name: "OpenAPIRuntime", package: "swift-openapi-runtime"),
                 .product(name: "GoogleCloudKit", package: "google-cloud-kit")
             ],
             resources: [
                 .process("openapi-generator-config.yml"),
                 .process("openapi.yml"),
-                .process("event-generator-config.yaml"),
-                .process("event.yaml"),
-                .process("projection-model.yaml")
             ],
             plugins: [
                 .plugin(name: "OpenAPIGenerator", package: "swift-openapi-generator"),
-                .plugin(name: "DomainEventGeneratorPlugin", package: "DDDKit"),
-                .plugin(name: "ProjectionModelGeneratorPlugin", package: "DDDKit")
             ]
         ),
-        .target(
-            name: "SharedTestUtility",
-            dependencies: [
-                "BusinessClientAggregate",
-                .product(name: "TestUtility", package: "DDDKit")
-            ],
-            path: "Tests/SharedTestUtility"
-        ),
         .testTarget(
-            name: "BusinessClientTests",
+            name: "GcsUploaderTests",
             dependencies: [
-                "SharedTestUtility"
+                "GcsUploader"
             ]
         ),
         .executableTarget(
             name: "FileStorageContextServer",
             dependencies: [
-                "BusinessClientAggregate",
+                "GcsUploader",
                 .product(name: "OpenAPIHummingbird", package: "swift-openapi-hummingbird"),
                 .product(name: "Hummingbird", package: "hummingbird")
             ]

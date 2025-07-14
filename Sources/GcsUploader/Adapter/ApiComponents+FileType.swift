@@ -1,4 +1,4 @@
-extension Components.Parameters.fileType {
+extension Components.Parameters.fileContentType {
     
     var wrapped: (fileType: String, ext: String) {
         switch self {
