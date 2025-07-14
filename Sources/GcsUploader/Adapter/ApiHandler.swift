@@ -9,12 +9,13 @@ package struct ApiHandler: APIProtocol {
         self.uploader = uploader
     }
     
-    package func uploadFromQuotingContext(_ input: Operations.uploadFromQuotingContext.Input) async throws -> Operations.uploadFromQuotingContext.Output {
+    package func uploadToGcs(_ input: Operations.uploadToGcs.Input) async throws -> Operations.uploadToGcs.Output {
         let fileType = input.headers.fileContentType.wrapped.fileType
         let ext = input.headers.fileContentType.wrapped.ext
         
         var fileData: Data?
         var customerId: String?
+        var documentType: DocumentType?
         switch input.body {
         case let .multipartForm(multipartBody):
             for try await part in multipartBody {
@@ -25,6 +26,7 @@ package struct ApiHandler: APIProtocol {
                     }
                 case let .meta(metaPayload):
                     customerId = metaPayload.payload.body.customerId
+                    documentType = DocumentType(rawValue: metaPayload.payload.body.documentType.rawValue)
                 case .undocumented(_):
                     continue
                 }
@@ -36,14 +38,41 @@ package struct ApiHandler: APIProtocol {
         guard let customerId else {
             throw UploadError.customerIdIsNil
         }
+        guard let documentType else {
+            throw UploadError.documentTypeIsNil
+        }
         let documentId = UUID().uuidString
         var mediaLink: String?
         do {
-            let filePath = StoragePathGenerator.generateQuotingContextPath(customerId: customerId, documentId: documentId, ext: ext)
+            let filePath = getFilePath(customerId: customerId, documentType: documentType, documentId: documentId, ext: ext)
             mediaLink = try await self.uploader.upload(data: fileData, path: filePath, contentType: fileType, limit: .mb(10))
         } catch {
             return .serviceUnavailable(.init(body: .json(.init(stringLiteral: "\(error)"))))
         }
         return .ok(.init(body: .json(.init(documentId: documentId, mediaLink: mediaLink))))
+    }
+}
+
+extension ApiHandler {
+    
+    func getFilePath(customerId: String, documentType: DocumentType, documentId: String, ext: String) -> String {
+        switch documentType {
+        case .ProfitseekingEnterpriseAnnualIncomeTaxReturnDocument:
+            return StoragePathGenerator.generateAuditContextPath(customerId: customerId, documentType: documentType, documentId: documentId, ext: ext)
+        case .BusinessTaxReturnDocument:
+            return StoragePathGenerator.generateAuditContextPath(customerId: customerId, documentType: documentType, documentId: documentId, ext: ext)
+        case .BusinessClientRiskControlDocument:
+            return StoragePathGenerator.generateAuditContextPath(customerId: customerId, documentType: documentType, documentId: documentId, ext: ext)
+        case .FinancialComplianceAuditDocument:
+            return StoragePathGenerator.generateAuditContextPath(customerId: customerId, documentType: documentType, documentId: documentId, ext: ext)
+        case .TaxComplianceAuditDocument:
+            return StoragePathGenerator.generateAuditContextPath(customerId: customerId, documentType: documentType, documentId: documentId, ext: ext)
+        case .QuotingProof:
+            return StoragePathGenerator.generateQuotingContextPath(customerId: customerId, documentId: documentId, ext: ext)
+        case .ReplyForm:
+            return StoragePathGenerator.generateQuotingContextPath(customerId: customerId, documentId: documentId, ext: ext)
+        case .NewBusinessClientRiskControlDocument:
+            return StoragePathGenerator.generateQuotingContextPath(customerId: customerId, documentId: documentId, ext: ext)
+        }
     }
 }
