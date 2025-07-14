@@ -1,5 +1,5 @@
 import Foundation
-import BusinessClientAggregate
+import GcsUploader
 
 
 package final class MockUploader: Uploader {

@@ -11,38 +11,11 @@ servers:
         default: "13579"
         
 paths:
-  /business-clients:
+  /upload-file-from-quoting-context:
     post:
-      operationId: createBusinessClient
+      operationId: uploadFromQuotingContext
       parameters:
-        - $ref: '#/components/parameters/userId'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - customerId
-              properties:
-                customerId:
-                  type: string
-      responses:
-        '201':
-          description: Business client created successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BusinessClientId'
-        '503':
-          $ref: '#/components/responses/ServiceUnavailableError'
-
-  /business-clients/{businessClientId}/upload-profitseeking-enterprise-annual-income-tax-return-document:
-    post:
-      operationId: uploadProfitseekingEnterpriseAnnualIncomeTaxReturnDocument
-      parameters:
-        - $ref: '#/components/parameters/businessClientId'
-        - $ref: '#/components/parameters/userId'
-        - $ref: '#/components/parameters/fileType'
+        - $ref: '#/components/parameters/fileContentType'
       requestBody:
         required: true
         content:
@@ -60,13 +33,9 @@ paths:
                   type: object
                   required:
                     - customerId
-                    - year
                   properties:
                     customerId:
                       type: string
-                    year:
-                      type: number
-                      format: double
             encoding:
               file:
                 contentType: application/pdf, image/jpeg, image/png
@@ -74,7 +43,7 @@ paths:
                 contentType: application/json
       responses:
         '200':
-          description: upload ProfitseekingEnterpriseAnnualIncomeTaxReturnDocument successfully
+          description: upload file successfully
           content:
             application/json:
               schema:
@@ -90,31 +59,9 @@ paths:
           $ref: '#/components/responses/ServiceUnavailableError'
                 
 components:
-  schemas:
-    BusinessClientId:
-      type: object
-      properties:
-        businessClientId:
-          type: string
-
   parameters:
-    businessClientId:
-      name: businessClientId
-      in: path
-      required: true
-      schema:
-        type: string
-        
-    userId:
-      name: userId
-      in: header
-      description: user id to fetch
-      required: true
-      schema:
-        type: string
-        
-    fileType:
-      name: fileType
+    fileContentType:
+      name: fileContentType
       in: header
       description: file content type
       required: true

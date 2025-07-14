@@ -1,27 +1,37 @@
 import Foundation
-import OpenAPIRuntime
 import Core
 import Storage
 import AsyncHTTPClient
 import NIO
 
 
-package struct Config {
-    let projectId = ProcessInfo.processInfo.environment["GCS_PROJECT_ID"] ?? "ai-jiabao-com"
-    let bucket = ProcessInfo.processInfo.environment["GCS_BUCKET"] ?? "mendesky"
-    let credentialsFile = ProcessInfo.processInfo.environment["GCS_CREDENTIALSFILE"] ?? ""
+package struct UploaderConfiguration {
+    
+    let projectId: String
+    let bucket: String
+    let credentialsFile: String
+    
+    static var `default`: Self {
+        get {
+            let projectId = ProcessInfo.processInfo.environment["GCS_PROJECT_ID"] ?? "ai-jiabao-com"
+            let bucket = ProcessInfo.processInfo.environment["GCS_BUCKET"] ?? "mendesky"
+            let credentialsFile = ProcessInfo.processInfo.environment["GCS_CREDENTIALSFILE"] ?? ""
+            return .init(projectId: projectId, bucket: bucket, credentialsFile: credentialsFile)
+        }
+    }
 }
+
 
 package final class GcsUploader: Uploader {
     
     let eventLoopGroup: EventLoopGroup
     let httpClient: HTTPClient
-    let config: Config
+    let config: UploaderConfiguration
     
-    package init(eventLoopGroup: EventLoopGroup, httpClient: HTTPClient) {
+    package init(eventLoopGroup: EventLoopGroup, httpClient: HTTPClient, config: UploaderConfiguration = .default) {
         self.eventLoopGroup = eventLoopGroup
         self.httpClient = httpClient
-        self.config = Config()
+        self.config = config
     }
     
     package func upload(data: Data, path: String, contentType: String, limit: FileSizeLimit) async throws -> String? {

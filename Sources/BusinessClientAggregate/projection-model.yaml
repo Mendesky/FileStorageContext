@@ -1,4 +1,0 @@
-BusinessClient:
-  model: aggregateRoot
-  createdEvent: BusinessClientCreated
-  deletedEvent: BusinessClientDeleted

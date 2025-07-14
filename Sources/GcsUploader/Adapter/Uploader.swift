@@ -1,5 +1,3 @@
-import AsyncHTTPClient
-import OpenAPIRuntime
 import Foundation
 
 package protocol Uploader: Sendable {
