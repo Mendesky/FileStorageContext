@@ -1,6 +1,6 @@
 extension Components.Parameters.fileContentType {
     
-    var wrapped: (fileType: String, ext: String) {
+    var wrapped: (fileContentType: String, ext: String) {
         switch self {
         case .jpeg:
             ("image/jpeg", "jpg")

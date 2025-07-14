@@ -13,7 +13,7 @@ servers:
 paths:
   /upload-to-gcs:
     post:
-      operationId: uploadToGcs
+      operationId: upload
       parameters:
         - $ref: '#/components/parameters/fileContentType'
       requestBody:
