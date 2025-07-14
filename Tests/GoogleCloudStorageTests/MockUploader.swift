@@ -1,5 +1,5 @@
 import Foundation
-import GcsUploader
+import GoogleCloudStorage
 
 
 package final class MockUploader: Uploader {

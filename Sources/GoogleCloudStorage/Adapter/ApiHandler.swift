@@ -9,8 +9,8 @@ package struct ApiHandler: APIProtocol {
         self.uploader = uploader
     }
     
-    package func uploadToGcs(_ input: Operations.uploadToGcs.Input) async throws -> Operations.uploadToGcs.Output {
-        let fileType = input.headers.fileContentType.wrapped.fileType
+    package func upload(_ input: Operations.upload.Input) async throws -> Operations.upload.Output {
+        let fileContentType = input.headers.fileContentType.wrapped.fileContentType
         let ext = input.headers.fileContentType.wrapped.ext
         
         var fileData: Data?
@@ -45,7 +45,7 @@ package struct ApiHandler: APIProtocol {
         var mediaLink: String?
         do {
             let filePath = getFilePath(customerId: customerId, documentType: documentType, documentId: documentId, ext: ext)
-            mediaLink = try await self.uploader.upload(data: fileData, path: filePath, contentType: fileType, limit: .mb(10))
+            mediaLink = try await self.uploader.upload(data: fileData, path: filePath, contentType: fileContentType, limit: .mb(10))
         } catch {
             return .serviceUnavailable(.init(body: .json(.init(stringLiteral: "\(error)"))))
         }

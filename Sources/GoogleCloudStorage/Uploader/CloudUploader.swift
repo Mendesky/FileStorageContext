@@ -5,7 +5,7 @@ import AsyncHTTPClient
 import NIO
 
 
-package struct UploaderConfiguration {
+package struct StorageConfiguration {
     
     let projectId: String
     let bucket: String
@@ -22,13 +22,13 @@ package struct UploaderConfiguration {
 }
 
 
-package final class GcsUploader: Uploader {
+package final class CloudUploader: Uploader {
     
     let eventLoopGroup: EventLoopGroup
     let httpClient: HTTPClient
-    let config: UploaderConfiguration
+    let config: StorageConfiguration
     
-    package init(eventLoopGroup: EventLoopGroup, httpClient: HTTPClient, config: UploaderConfiguration = .default) {
+    package init(eventLoopGroup: EventLoopGroup, httpClient: HTTPClient, config: StorageConfiguration = .default) {
         self.eventLoopGroup = eventLoopGroup
         self.httpClient = httpClient
         self.config = config

@@ -13,7 +13,7 @@ let package = Package(
         .library(
             name: "FileStorageContext",
             targets: [
-                "GcsUploader",
+                "GoogleCloudStorage"
             ]
         ),
         .executable(
@@ -31,7 +31,7 @@ let package = Package(
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
-            name: "GcsUploader",
+            name: "GoogleCloudStorage",
             dependencies: [
                 .product(name: "OpenAPIRuntime", package: "swift-openapi-runtime"),
                 .product(name: "GoogleCloudKit", package: "google-cloud-kit")
@@ -45,15 +45,15 @@ let package = Package(
             ]
         ),
         .testTarget(
-            name: "GcsUploaderTests",
+            name: "GoogleCloudStorageTests",
             dependencies: [
-                "GcsUploader"
+                "GoogleCloudStorage"
             ]
         ),
         .executableTarget(
             name: "FileStorageContextServer",
             dependencies: [
-                "GcsUploader",
+                "GoogleCloudStorage",
                 .product(name: "OpenAPIHummingbird", package: "swift-openapi-hummingbird"),
                 .product(name: "Hummingbird", package: "hummingbird")
             ]
