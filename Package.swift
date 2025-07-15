@@ -33,6 +33,7 @@ let package = Package(
         .target(
             name: "GoogleCloudStorage",
             dependencies: [
+                "General",
                 .product(name: "OpenAPIRuntime", package: "swift-openapi-runtime"),
                 .product(name: "GoogleCloudKit", package: "google-cloud-kit")
             ],
@@ -43,6 +44,9 @@ let package = Package(
             plugins: [
                 .plugin(name: "OpenAPIGenerator", package: "swift-openapi-generator"),
             ]
+        ),
+        .target(
+            name: "General"
         ),
         .testTarget(
             name: "GoogleCloudStorageTests",

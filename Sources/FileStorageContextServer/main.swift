@@ -12,7 +12,7 @@ let router = Router()
 // defining your service API.
 let eventLoopGroup = MultiThreadedEventLoopGroup(numberOfThreads: 1)
 let httpClient = HTTPClient(eventLoopGroupProvider: .shared(eventLoopGroup), configuration: .init(ignoreUncleanSSLShutdown: true))
-let uploader = CloudUploader(eventLoopGroup: eventLoopGroup, httpClient: httpClient)
+let uploader = Uploader(eventLoopGroup: eventLoopGroup, httpClient: httpClient)
 let api = ApiHandler(uploader: uploader)
 
 router.middlewares.add(CORSMiddleware(allowOrigin: .all, allowMethods: [.get, .post, .put, .delete, .patch]))

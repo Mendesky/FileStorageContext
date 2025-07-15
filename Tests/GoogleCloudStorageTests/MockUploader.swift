@@ -1,8 +1,8 @@
 import Foundation
-import GoogleCloudStorage
+import General
 
 
-package final class MockUploader: Uploader {
+package final class MockUploader: UploaderProtocol {
     
     let mediaLink: String?
     
