@@ -11,10 +11,12 @@ servers:
         default: "13579"
         
 paths:
-  /upload-to-gcs:
+  /{quotingContextDocumentType}/{quotingCaseId}:
     post:
-      operationId: upload
+      operationId: uploadFromQuotingContext
       parameters:
+        - $ref: '#/components/parameters/quotingCaseId'
+        - $ref: '#/components/parameters/quotingContextDocumentType'
         - $ref: '#/components/parameters/fileContentType'
       requestBody:
         required: true
@@ -24,35 +26,94 @@ paths:
               type: object
               required:
                 - file
-                - meta
               properties:
                 file:
                   type: string
                   format: binary
-                meta:
-                  type: object
-                  required:
-                    - customerId
-                    - documentType
-                  properties:
-                    customerId:
-                      type: string
-                    documentType:
-                      type: string
-                      enum:
-                        - ProfitseekingEnterpriseAnnualIncomeTaxReturnDocument
-                        - BusinessTaxReturnDocument
-                        - BusinessClientRiskControlDocument
-                        - FinancialComplianceAuditDocument
-                        - TaxComplianceAuditDocument
-                        - QuotingProof
-                        - ReplyForm
-                        - NewBusinessClientRiskControlDocument
             encoding:
               file:
                 contentType: application/pdf, image/jpeg, image/png
-              meta:
-                contentType: application/json
+
+      responses:
+        '200':
+          description: upload file successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - documentId
+                properties:
+                  documentId:
+                    type: string
+                  mediaLink:
+                    type: string
+        '503':
+          $ref: '#/components/responses/ServiceUnavailableError'
+          
+  /{customerId}/{customerRelationshipContextDocumentType}/upload-to-gcs:
+    post:
+      operationId: uploadFromCustomerRelationshipContext
+      parameters:
+        - $ref: '#/components/parameters/customerId'
+        - $ref: '#/components/parameters/customerRelationshipContextDocumentType'
+        - $ref: '#/components/parameters/fileContentType'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+              properties:
+                file:
+                  type: string
+                  format: binary
+            encoding:
+              file:
+                contentType: application/pdf, image/jpeg, image/png
+
+      responses:
+        '200':
+          description: upload file successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - documentId
+                properties:
+                  documentId:
+                    type: string
+                  mediaLink:
+                    type: string
+        '503':
+          $ref: '#/components/responses/ServiceUnavailableError'
+          
+  /{auditContextDocumentType}/{customerId}:
+    post:
+      operationId: uploadFromAuditContext
+      parameters:
+        - $ref: '#/components/parameters/customerId'
+        - $ref: '#/components/parameters/auditContextDocumentType'
+        - $ref: '#/components/parameters/fileContentType'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+              properties:
+                file:
+                  type: string
+                  format: binary
+            encoding:
+              file:
+                contentType: application/pdf, image/jpeg, image/png
+
       responses:
         '200':
           description: upload file successfully
@@ -72,6 +133,57 @@ paths:
                 
 components:
   parameters:
+    quotingCaseId:
+      name: quotingCaseId
+      in: path
+      description: quotingCase id to fetch
+      required: true
+      schema:
+        type: string
+        
+    customerId:
+      name: customerId
+      in: path
+      description: customer id to fetch
+      required: true
+      schema:
+        type: string
+        
+    quotingContextDocumentType:
+      name: quotingContextDocumentType
+      in: path
+      description: document type
+      required: true
+      schema:
+        type: string
+        enum:
+          - quotingProof
+          - replyForm
+          
+    customerRelationshipContextDocumentType:
+      name: customerRelationshipContextDocumentType
+      in: path
+      description: document type
+      required: true
+      schema:
+        type: string
+        enum:
+          - newBusinessClientRiskControlDocument
+          
+    auditContextDocumentType:
+      name: auditContextDocumentType
+      in: path
+      description: document type
+      required: true
+      schema:
+        type: string
+        enum:
+          - profitseekingEnterpriseAnnualIncomeTaxReturnDocument
+          - businessTaxReturnDocument
+          - businessClientRiskControlDocument
+          - financialComplianceAuditDocument
+          - taxComplianceAuditDocument
+  
     fileContentType:
       name: fileContentType
       in: header
