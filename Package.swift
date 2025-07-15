@@ -13,7 +13,8 @@ let package = Package(
         .library(
             name: "FileStorageContext",
             targets: [
-                "GoogleCloudStorage"
+                "GoogleCloudStorage",
+                "FileStorageCore"
             ]
         ),
         .executable(
@@ -33,6 +34,7 @@ let package = Package(
         .target(
             name: "GoogleCloudStorage",
             dependencies: [
+                "FileStorageCore",
                 .product(name: "OpenAPIRuntime", package: "swift-openapi-runtime"),
                 .product(name: "GoogleCloudKit", package: "google-cloud-kit")
             ],
@@ -43,6 +45,9 @@ let package = Package(
             plugins: [
                 .plugin(name: "OpenAPIGenerator", package: "swift-openapi-generator"),
             ]
+        ),
+        .target(
+            name: "FileStorageCore"
         ),
         .testTarget(
             name: "GoogleCloudStorageTests",
