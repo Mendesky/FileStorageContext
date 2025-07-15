@@ -14,7 +14,7 @@ package final class Uploader: UploaderProtocol {
     let bucket: String
     let credentialsFile: String
     
-    package init(eventLoopGroup: EventLoopGroup, httpClient: HTTPClient, projectId: String = ProcessInfo.processInfo.environment["GCS_PROJECT_ID"] ?? "ai-jiabao-com", bucket: String = ProcessInfo.processInfo.environment["GCS_BUCKET"] ?? "mendesky", credentialsFile: String = ProcessInfo.processInfo.environment["GCS_CREDENTIALSFILE"] ?? "") {
+    package init(eventLoopGroup: EventLoopGroup, httpClient: HTTPClient, projectId: String, bucket: String, credentialsFile: String) {
         self.eventLoopGroup = eventLoopGroup
         self.httpClient = httpClient
         self.projectId = projectId

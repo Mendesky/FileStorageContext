@@ -12,7 +12,10 @@ let router = Router()
 // defining your service API.
 let eventLoopGroup = MultiThreadedEventLoopGroup(numberOfThreads: 1)
 let httpClient = HTTPClient(eventLoopGroupProvider: .shared(eventLoopGroup), configuration: .init(ignoreUncleanSSLShutdown: true))
-let uploader = Uploader(eventLoopGroup: eventLoopGroup, httpClient: httpClient)
+let projectId = ProcessInfo.processInfo.environment["GCS_PROJECT_ID"] ?? "ai-jiabao-com"
+let bucket = ProcessInfo.processInfo.environment["GCS_BUCKET"] ?? "mendesky"
+let credentialsFile = ProcessInfo.processInfo.environment["GCS_CREDENTIALSFILE"] ?? ""
+let uploader = Uploader(eventLoopGroup: eventLoopGroup, httpClient: httpClient, projectId: projectId, bucket: bucket, credentialsFile: credentialsFile)
 let api = ApiHandler(uploader: uploader)
 
 router.middlewares.add(CORSMiddleware(allowOrigin: .all, allowMethods: [.get, .post, .put, .delete, .patch]))
