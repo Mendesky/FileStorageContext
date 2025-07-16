@@ -15,7 +15,7 @@ let httpClient = HTTPClient(eventLoopGroupProvider: .shared(eventLoopGroup), con
 let projectId = ProcessInfo.processInfo.environment["GCS_PROJECT_ID"] ?? "ai-jiabao-com"
 let bucket = ProcessInfo.processInfo.environment["GCS_BUCKET"] ?? "mendesky"
 let credentialsFile = ProcessInfo.processInfo.environment["GCS_CREDENTIALSFILE"] ?? ""
-let uploader = Uploader(eventLoopGroup: eventLoopGroup, httpClient: httpClient, projectId: projectId, bucket: bucket, credentialsFile: credentialsFile)
+let uploader = GCSUploader(eventLoopGroup: eventLoopGroup, httpClient: httpClient, projectId: projectId, bucket: bucket, credentialsFile: credentialsFile)
 let api = ApiHandler(uploader: uploader)
 
 router.middlewares.add(CORSMiddleware(allowOrigin: .all, allowMethods: [.get, .post, .put, .delete, .patch]))

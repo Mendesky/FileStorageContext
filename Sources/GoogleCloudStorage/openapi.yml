@@ -11,7 +11,7 @@ servers:
         default: "13579"
         
 paths:
-  /{quotingContextDocumentType}/{quotingCaseId}:
+  /quoting-context/{quotingCaseId}/{quotingContextDocumentType}:
     post:
       operationId: uploadFromQuotingContext
       parameters:
@@ -51,7 +51,7 @@ paths:
         '503':
           $ref: '#/components/responses/ServiceUnavailableError'
           
-  /{customerId}/{customerRelationshipContextDocumentType}/upload-to-gcs:
+  /customer-relationship-context/{customerId}/{customerRelationshipContextDocumentType}:
     post:
       operationId: uploadFromCustomerRelationshipContext
       parameters:
@@ -91,7 +91,7 @@ paths:
         '503':
           $ref: '#/components/responses/ServiceUnavailableError'
           
-  /{auditContextDocumentType}/{customerId}:
+  /audit-context/{customerId}/{auditContextDocumentType}:
     post:
       operationId: uploadFromAuditContext
       parameters:

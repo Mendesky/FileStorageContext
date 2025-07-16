@@ -30,7 +30,7 @@ package struct ApiHandler: APIProtocol {
             }
         }
         guard let fileData else {
-            throw UploadError.fileDataIsNil
+            throw UploadError.invalidFileData
         }
 
         let documentId = UUID().uuidString
@@ -64,10 +64,10 @@ package struct ApiHandler: APIProtocol {
             }
         }
         guard let fileData else {
-            throw UploadError.fileDataIsNil
+            throw UploadError.invalidFileData
         }
         guard let documentType = DocumentType(rawValue: input.path.customerRelationshipContextDocumentType.rawValue) else {
-            throw UploadError.documentTypeIsInValid(value: input.path.customerRelationshipContextDocumentType.rawValue)
+            throw UploadError.invalidDocumentType(value: input.path.customerRelationshipContextDocumentType.rawValue)
         }
         
         let documentId = UUID().uuidString
@@ -101,10 +101,10 @@ package struct ApiHandler: APIProtocol {
             }
         }
         guard let fileData else {
-            throw UploadError.fileDataIsNil
+            throw UploadError.invalidFileData
         }
         guard let documentType = DocumentType(rawValue: input.path.auditContextDocumentType.rawValue) else {
-            throw UploadError.documentTypeIsInValid(value: input.path.auditContextDocumentType.rawValue)
+            throw UploadError.invalidDocumentType(value: input.path.auditContextDocumentType.rawValue)
         }
         let documentId = UUID().uuidString
         var mediaLink: String?
