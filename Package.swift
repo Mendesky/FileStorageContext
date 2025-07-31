@@ -63,5 +63,8 @@ let package = Package(
                 .product(name: "Hummingbird", package: "hummingbird")
             ]
         )
+    ],
+    swiftLanguageModes: [
+        .v5
     ]
 )
