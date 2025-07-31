@@ -26,6 +26,6 @@ try api.registerHandlers(on: router, serverURL: URL(string: "/file-storage-conte
 
 
 // Create the application and run as you would normally.
-let app = Application(router: router, configuration: .init(address: .hostname("0.0.0.0", port: 13579)))
+let app = Application(router: router, configuration: .init(address: .hostname("0.0.0.0", port: 24001)))
 try await app.runService()
 
