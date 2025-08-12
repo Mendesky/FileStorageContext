@@ -23,7 +23,10 @@ router.middlewares.add(CORSMiddleware(allowOrigin: .all, allowHeaders: ["fileCon
 
 // Call the generated function on your implementation to add its request
 // handlers to the app.
-try api.registerHandlers(on: router, serverURL: URL(string: "/file-storage-context")!)
+try api.registerHandlers(on: router, serverURL: URL(string: "/file-storage-context")!, middlewares: [
+    LoggingMiddleware()
+])
+
 
 
 // Create the application and run as you would normally.
