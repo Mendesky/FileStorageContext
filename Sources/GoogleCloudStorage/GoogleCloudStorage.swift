@@ -1,1 +1,1 @@
-package typealias GCSUploader = Uploader
+package typealias GCStorage = Storage

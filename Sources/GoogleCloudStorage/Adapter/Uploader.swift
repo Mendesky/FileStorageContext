@@ -6,31 +6,31 @@ import NIO
 import FileStorageCore
 
 
-package final class Uploader: UploaderProtocol {
-    
-    let eventLoopGroup: EventLoopGroup
-    let httpClient: HTTPClient
+package final class Storage: UploaderProtocol {
+
+    let client: GoogleCloudStorageClient
     let projectId: String
     let bucket: String
-    let credentialsFile: String
     
-    package init(eventLoopGroup: EventLoopGroup, httpClient: HTTPClient, projectId: String, bucket: String, credentialsFile: String) {
-        self.eventLoopGroup = eventLoopGroup
-        self.httpClient = httpClient
+    package init(eventLoopGroup: EventLoopGroup, httpClient: HTTPClient, projectId: String, bucket: String, credentialsFile: String) throws {
+        let credentialsConfiguration = try GoogleCloudCredentialsConfiguration(projectId: projectId, credentialsFile: credentialsFile)
+        let cloudStorageConfiguration: GoogleCloudStorageConfiguration = .default()
+        self.client = try GoogleCloudStorageClient(credentials: credentialsConfiguration, storageConfig: cloudStorageConfiguration, httpClient: httpClient, eventLoop: eventLoopGroup.next())
         self.projectId = projectId
         self.bucket = bucket
-        self.credentialsFile = credentialsFile
     }
     
     package func upload(data: Data, path: String, contentType: String, limit: FileSizeLimit) async throws -> String? {
         do {
-            let credentialsConfiguration = try GoogleCloudCredentialsConfiguration(projectId: projectId, credentialsFile: credentialsFile)
-            let cloudStorageConfiguration: GoogleCloudStorageConfiguration = .default()
-            let gcs = try GoogleCloudStorageClient(credentials: credentialsConfiguration, storageConfig: cloudStorageConfiguration, httpClient: httpClient, eventLoop: eventLoopGroup.next())
-            let object = try await gcs.object.createSimpleUpload(bucket: bucket, data: data, name: path, contentType: contentType).get()
+            let object = try await client.object.createSimpleUpload(bucket: bucket, data: data, name: path, contentType: contentType).get()
             return object.mediaLink
         } catch {
             throw UploadError.uploadFailed(error: error)
         }
+    }
+    
+    package func download(path: String) async throws {
+        let object = try await client.object.get(bucket: bucket, object: path, queryParameters: nil).get()
+        
     }
 }
