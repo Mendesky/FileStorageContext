@@ -8,12 +8,12 @@
 
 package enum CustomerRelationshipContextDocumentCategory {
     /// 新客風控表
-    case newBusinessClientRiskControlDocument
+    case businessClientRiskControlDocument
 
     var rawValue: String {
         switch self {
-        case .newBusinessClientRiskControlDocument:
-            "business_client_risk_control_document/new"
+        case .businessClientRiskControlDocument:
+            "business_client_risk_control_document"
         }
     }
 }

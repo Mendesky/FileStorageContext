@@ -50,8 +50,8 @@ extension Components.Parameters.customerRelationshipContextDocumentType {
     var documentType: CustomerRelationshipContextDocumentCategory {
         get{
             switch self{
-            case .newBusinessClientRiskControlDocument:
-                .newBusinessClientRiskControlDocument
+            case .businessClientRiskControlDocument:
+                .businessClientRiskControlDocument
             }
         }
     }

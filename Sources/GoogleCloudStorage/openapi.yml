@@ -167,7 +167,7 @@ components:
       schema:
         type: string
         enum:
-          - newBusinessClientRiskControlDocument
+          - businessClientRiskControlDocument
           
     auditContextDocumentType:
       name: auditContextDocumentType
