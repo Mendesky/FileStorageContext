@@ -8,14 +8,13 @@ servers:
       host:
         default: 127.0.0.1
       port:
-        default: "13579"
+        default: "24001"
         
 paths:
-  /quoting-context/{quotingCaseId}/{quotingContextDocumentType}:
+  /quoting-context/{quotingContextDocumentType}:
     post:
       operationId: uploadFromQuotingContext
       parameters:
-        - $ref: '#/components/parameters/quotingCaseId'
         - $ref: '#/components/parameters/quotingContextDocumentType'
         - $ref: '#/components/parameters/fileContentType'
       requestBody:
@@ -179,7 +178,7 @@ components:
         type: string
         enum:
           - profitseekingEnterpriseAnnualIncomeTaxReturnDocument
-          - businessTaxReturnDocument
+          - businessTaxReturnDocument401
           - businessClientRiskControlDocument
           - financialComplianceAuditDocument
           - taxComplianceAuditDocument
