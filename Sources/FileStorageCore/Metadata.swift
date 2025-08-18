@@ -7,7 +7,6 @@
 
 public protocol Metadata: Codable {
     var originalName: String { get }
-    var markDeleted: Bool { set get }
     var represented: [String: Codable] { get }
     
     init?(from dictionary: [String:Codable])

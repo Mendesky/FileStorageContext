@@ -11,14 +11,12 @@ public struct StandardContextMetadata: ContextMetadata {
     public let context: String
     public let aggregateRoot: String
     public let aggregateRootId: String
-    public var markDeleted: Bool
     
     public init(originalName: String, context: String, aggregateRoot: String, aggregateRootId: String, markDeleted: Bool = false) {
         self.originalName = originalName
         self.context = context
         self.aggregateRoot = aggregateRoot
         self.aggregateRootId = aggregateRootId
-        self.markDeleted = markDeleted
     }
 }
 
@@ -46,7 +44,6 @@ extension StandardContextMetadata {
         self.aggregateRoot = aggregateRoot
         self.aggregateRootId = aggregateRootId
         self.originalName = originalName
-        self.markDeleted = markDeleted
     }
     
     public var represented: [String: Codable]{
@@ -55,8 +52,7 @@ extension StandardContextMetadata {
                 "context": context,
                 "aggregateRoot": aggregateRoot,
                 "aggregateRootId": aggregateRootId,
-                "originalName": originalName,
-                "markDeleted": markDeleted
+                "originalName": originalName
             ]
         }
     }

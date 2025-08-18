@@ -37,7 +37,7 @@ public struct Storage<MetadataType: Metadata>: StorageProtocol {
         }
     }
     
-    public func setMetadata(_ metadata: [String: Any], path: String) async throws  {
+    public func setMetadata(_ metadata: [String: Codable], path: String) async throws  {
         do {
             _ = try await underlyingClient.object.patch(bucket: bucket, object: path, metadata: metadata, queryParameters: nil).get()
         } catch {
@@ -45,7 +45,7 @@ public struct Storage<MetadataType: Metadata>: StorageProtocol {
         }
     }
     
-    public func getMetadata(_ metadata: [String: String], path: String) async throws -> [String: String]? {
+    public func getMetadata(path: String) async throws -> [String: Codable]? {
         do {
             let object = try await underlyingClient.object.get(bucket: bucket, object: path, queryParameters: nil).get()
             return object.metadata
@@ -60,14 +60,6 @@ public struct Storage<MetadataType: Metadata>: StorageProtocol {
             return response.data
         } catch {
             throw StorageError.downloadFailed(error: error)
-        }
-    }
-    
-    public func markDelete(path: String) async throws {
-        do {
-            try await setMetadata(["markDeleted": true], path: path)
-        } catch {
-            throw StorageError.markDeletedFailed(error: error)
         }
     }
     

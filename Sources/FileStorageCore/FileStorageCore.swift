@@ -15,6 +15,7 @@ public protocol StorageProtocol {
     func getMetadata(path: String) async throws -> [String: Codable]?
     func download(path: String) async throws -> Data?
     func markDelete(path: String) async throws
+    func isMarkedDeleted(path: String) async throws -> Bool
 }
 
 extension StorageProtocol {
@@ -33,5 +34,28 @@ extension StorageProtocol {
             .init(from: $0)
         }
     }
+    
+    public func markDelete(path: String) async throws {
+        do {
+            try await setMetadata(["markDeleted": true], path: path)
+        } catch {
+            throw StorageError.markDeletedFailed(error: error)
+        }
+    }
+    
+    public func isMarkedDeleted(path: String) async throws -> Bool{
+        do {
+            guard let metadata = try await getMetadata(path: path),
+                  let markDeleted = metadata["markDeleted"] as? Bool else {
+                return false
+            }
+            return markDeleted
+        
+        } catch {
+            throw StorageError.markDeletedFailed(error: error)
+        }
+    }
+    
+    
     
 }
