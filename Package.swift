@@ -18,8 +18,8 @@ let package = Package(
             ]
         ),
         .executable(
-            name: "FileStorageContextServer",
-            targets: ["FileStorageContextServer"]),
+            name: "Demo",
+            targets: ["Demo"]),
     ],
     dependencies: [
         .package(url: "https://github.com/Mendesky/google-cloud-kit.git", branch: "main")
@@ -38,7 +38,7 @@ let package = Package(
             ]
         ),
         .executableTarget(
-            name: "FileStorageContextServer",
+            name: "Demo",
             dependencies: [
                 "GoogleCloudStorage"
             ]
