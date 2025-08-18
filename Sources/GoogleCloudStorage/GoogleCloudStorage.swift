@@ -24,7 +24,7 @@ public struct Storage<MetadataType: Metadata>: StorageProtocol {
         self.init(projectId: projectId, bucket: bucket, eventLoopGroup: eventLoopGroup, client: underlyingClient)
     }
     
-    public func upload(data: Data, path: String, contentType: String, metadata: [String: Codable]? = nil, limit: FileSizeLimit) async throws -> String? {
+    public func upload(data: Data, path: String, contentType: String, metadata: [String: String]? = nil, limit: FileSizeLimit) async throws -> String? {
         
         do {
             let object = try await underlyingClient.object.createSimpleUpload(bucket: bucket, data: data, name: path, contentType: contentType).get()
@@ -37,7 +37,7 @@ public struct Storage<MetadataType: Metadata>: StorageProtocol {
         }
     }
     
-    public func setMetadata(_ metadata: [String: Codable], path: String) async throws  {
+    public func setMetadata(_ metadata: [String: String], path: String) async throws  {
         do {
             _ = try await underlyingClient.object.patch(bucket: bucket, object: path, metadata: metadata, queryParameters: nil).get()
         } catch {
@@ -45,7 +45,7 @@ public struct Storage<MetadataType: Metadata>: StorageProtocol {
         }
     }
     
-    public func getMetadata(path: String) async throws -> [String: Codable]? {
+    public func getMetadata(path: String) async throws -> [String: String]? {
         do {
             let object = try await underlyingClient.object.get(bucket: bucket, object: path, queryParameters: nil).get()
             return object.metadata

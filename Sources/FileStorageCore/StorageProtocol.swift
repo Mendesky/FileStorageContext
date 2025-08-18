@@ -9,10 +9,10 @@ import Foundation
 
 public protocol StorageProtocol {
     associatedtype MetadataType: Metadata
-    func upload(data: Data, path: String, contentType: String, metadata: [String: Codable]?, limit: FileSizeLimit) async throws -> String?
+    func upload(data: Data, path: String, contentType: String, metadata: [String: String]?, limit: FileSizeLimit) async throws -> String?
     
-    func setMetadata(_ metadata: [String: Codable], path: String) async throws
-    func getMetadata(path: String) async throws -> [String: Codable]?
+    func setMetadata(_ metadata: [String: String], path: String) async throws
+    func getMetadata(path: String) async throws -> [String: String]?
     func download(path: String) async throws -> Data?
     func markDelete(path: String) async throws
     func isMarkedDeleted(path: String) async throws -> Bool
@@ -29,7 +29,7 @@ extension StorageProtocol {
     }
     
     public func getMetadata(path: String) async throws -> MetadataType?{
-        let dictionary: [String: Codable]? = try await getMetadata(path: path)
+        let dictionary: [String: String]? = try await getMetadata(path: path)
         return dictionary.flatMap{
             .init(from: $0)
         }
@@ -37,7 +37,7 @@ extension StorageProtocol {
     
     public func markDelete(path: String) async throws {
         do {
-            try await setMetadata(["markDeleted": true], path: path)
+            try await setMetadata(["markDeleted": String(true)], path: path)
         } catch {
             throw StorageError.markDeletedFailed(error: error)
         }
@@ -46,11 +46,11 @@ extension StorageProtocol {
     public func isMarkedDeleted(path: String) async throws -> Bool{
         do {
             guard let metadata = try await getMetadata(path: path),
-                  let markDeleted = metadata["markDeleted"] as? Bool else {
+                  let markDeletedValue = metadata["markDeleted"],
+                  let markDeleted = Bool(markDeletedValue) else {
                 return false
             }
             return markDeleted
-        
         } catch {
             throw StorageError.markDeletedFailed(error: error)
         }

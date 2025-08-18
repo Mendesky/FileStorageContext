@@ -4,7 +4,9 @@
 //
 //  Created by Grady Zhuo on 2025/8/18.
 //
+import Logging
 
+fileprivate let logger = Logger(label: "[StandardContextMetadata]")
 
 public struct StandardContextMetadata: ContextMetadata {
     public let originalName: String
@@ -22,21 +24,22 @@ public struct StandardContextMetadata: ContextMetadata {
 
 extension StandardContextMetadata {
     
-    public init?(from dictionary: [String:Codable]){
-        guard let context = dictionary["context"] as? String else {
+    public init?(from dictionary: [String:String]){
+        guard let context = dictionary["context"] else {
+            logger.debug("Failed to get context from \(dictionary)")
             return nil
         }
-        guard let aggregateRoot = dictionary["aggregateRoot"] as? String else {
+        guard let aggregateRoot = dictionary["aggregateRoot"]else {
+            logger.debug("Failed to get aggregateRoot from \(dictionary)")
             return nil
         }
-        guard let aggregateRootId = dictionary["aggregateRootId"] as? String else {
-            return nil
-        }
-        guard let markDeleted = dictionary["markDeleted"] as? Bool else {
+        guard let aggregateRootId = dictionary["aggregateRootId"] else {
+            logger.debug("Failed to get aggregateRootId from \(dictionary)")
             return nil
         }
         
-        guard let originalName = dictionary["originalName"] as? String else {
+        guard let originalName = dictionary["originalName"] else {
+            logger.debug("Failed to get originalName from \(dictionary)")
             return nil
         }
         
@@ -46,7 +49,7 @@ extension StandardContextMetadata {
         self.originalName = originalName
     }
     
-    public var represented: [String: Codable]{
+    public var represented: [String: String]{
         get{
             return [
                 "context": context,

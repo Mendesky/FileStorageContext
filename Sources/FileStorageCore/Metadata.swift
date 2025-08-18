@@ -7,9 +7,9 @@
 
 public protocol Metadata: Codable {
     var originalName: String { get }
-    var represented: [String: Codable] { get }
+    var represented: [String: String] { get }
     
-    init?(from dictionary: [String:Codable])
+    init?(from dictionary: [String:String])
 }
 
 
