@@ -18,36 +18,30 @@ let package = Package(
             ]
         ),
         .executable(
-            name: "FileStorageContextServer",
-            targets: ["FileStorageContextServer"]),
+            name: "Demo",
+            targets: ["Demo"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-openapi-generator", from: "1.0.0"),
-        .package(url: "https://github.com/apple/swift-openapi-runtime", from: "1.0.0"),
-        .package(url: "https://github.com/swift-server/swift-openapi-hummingbird.git", from: "2.0.1"),
-        .package(url: "https://github.com/hummingbird-project/hummingbird.git", from: "2.14.0"),
-        .package(url: "https://github.com/vapor-community/google-cloud-kit.git", from: "1.0.0-alpha.1")
+        .package(url: "https://github.com/Mendesky/google-cloud-kit.git", branch: "main")
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
+            name: "FileStorageCore"
+        ),
+        .target(
             name: "GoogleCloudStorage",
             dependencies: [
                 "FileStorageCore",
-                .product(name: "OpenAPIRuntime", package: "swift-openapi-runtime"),
-                .product(name: "GoogleCloudKit", package: "google-cloud-kit")
-            ],
-            resources: [
-                .process("openapi-generator-config.yml"),
-                .process("openapi.yml"),
-            ],
-            plugins: [
-                .plugin(name: "OpenAPIGenerator", package: "swift-openapi-generator"),
+                .product(name: "GoogleCloudKit", package: "google-cloud-kit"),
             ]
         ),
-        .target(
-            name: "FileStorageCore"
+        .executableTarget(
+            name: "Demo",
+            dependencies: [
+                "GoogleCloudStorage"
+            ]
         ),
         .testTarget(
             name: "GoogleCloudStorageTests",
@@ -55,14 +49,6 @@ let package = Package(
                 "GoogleCloudStorage"
             ]
         ),
-        .executableTarget(
-            name: "FileStorageContextServer",
-            dependencies: [
-                "GoogleCloudStorage",
-                .product(name: "OpenAPIHummingbird", package: "swift-openapi-hummingbird"),
-                .product(name: "Hummingbird", package: "hummingbird")
-            ]
-        )
     ],
     swiftLanguageModes: [
         .v5

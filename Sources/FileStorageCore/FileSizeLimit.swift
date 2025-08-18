@@ -1,4 +1,11 @@
-package enum FileSizeLimit{
+//
+//  FileSizeLimit 2.swift
+//  FileStorageContext
+//
+//  Created by Grady Zhuo on 2025/8/18.
+//
+
+public enum FileSizeLimit{
     case bytes(Int)
     case kb(Int)
     case mb(Int)
