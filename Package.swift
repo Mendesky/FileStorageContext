@@ -22,7 +22,6 @@ let package = Package(
             targets: ["FileStorageContextServer"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/vapor/jwt-kit.git", from: "4.3.0"),
         .package(url: "https://github.com/Mendesky/google-cloud-kit.git", branch: "main")
     ],
     targets: [
