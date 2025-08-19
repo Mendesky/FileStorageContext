@@ -6,32 +6,46 @@ import AsyncHTTPClient
 import NIO
 
 public struct Storage<MetadataType: Metadata>: StorageProtocol {
-    package let underlyingClient: GoogleCloudStorageClient
     let projectId: String
     let bucket: String
+    let eventLoopGroup: EventLoopGroup
+    let credentialsConfiguration: GoogleCloudCredentialsConfiguration
+    let cloudStorageConfiguration: GoogleCloudStorageConfiguration
     
-    public init(projectId: String, bucket: String, eventLoopGroup: EventLoopGroup, client: GoogleCloudStorageClient){
-        self.underlyingClient = client
+    public init(eventLoopGroup: EventLoopGroup, projectId: String, bucket: String, cloudStorageConfiguration: GoogleCloudStorageConfiguration = .default(), credentialsFile: String) throws {
         self.projectId = projectId
         self.bucket = bucket
+        self.eventLoopGroup = eventLoopGroup
+        self.credentialsConfiguration = try GoogleCloudCredentialsConfiguration(projectId: projectId, credentialsFile: credentialsFile)
+        self.cloudStorageConfiguration = cloudStorageConfiguration
     }
     
-    public init(eventLoopGroup: EventLoopGroup, httpClient: HTTPClient, projectId: String, bucket: String, credentialsFile: String) throws {
-        let credentialsConfiguration = try GoogleCloudCredentialsConfiguration(projectId: projectId, credentialsFile: credentialsFile)
+    private func withGCSClient<Response>(_ handler:(_ underlyingClient: GoogleCloudStorageClient) async throws ->Response) async throws ->Response{
+        let httpClient = HTTPClient(eventLoopGroup: eventLoopGroup)
         
-        let cloudStorageConfiguration: GoogleCloudStorageConfiguration = .default()
-        let underlyingClient = try GoogleCloudStorageClient(credentials: credentialsConfiguration, storageConfig: cloudStorageConfiguration, httpClient: httpClient, eventLoop: eventLoopGroup.next())
-        self.init(projectId: projectId, bucket: bucket, eventLoopGroup: eventLoopGroup, client: underlyingClient)
+        
+        let client = try GoogleCloudStorageClient(credentials: credentialsConfiguration, storageConfig: cloudStorageConfiguration, httpClient: httpClient, eventLoop: eventLoopGroup.next())
+        let response = try await handler(client)
+        try await httpClient.shutdown()
+        return response
     }
+    
+    
     
     public func upload(data: Data, path: String, contentType: String, metadata: [String: String]? = nil, limit: FileSizeLimit) async throws -> UploadedResult? {
         
         do {
-            let object = try await underlyingClient.object.createSimpleUpload(bucket: bucket, data: data, name: path, contentType: contentType).get()
-            if let metadata {
-                try await setMetadata(metadata, path: path)
+            return try await withGCSClient { underlyingClient in
+                let object = try await underlyingClient.object.createSimpleUpload(bucket: bucket, data: data, name: path, contentType: contentType).get()
+                if let metadata {
+                    try await setMetadata(metadata, path: path)
+                }
+                
+                guard let mediaLink = object.mediaLink else {
+                    return nil
+                }
+                return .init(path: path, mediaLink: mediaLink)
             }
-            return .init(path: path, mediaLink: object.mediaLink)
         } catch {
             throw StorageError.uploadFailed(error: error)
         }
@@ -39,7 +53,9 @@ public struct Storage<MetadataType: Metadata>: StorageProtocol {
     
     public func setMetadata(_ metadata: [String: String], path: String) async throws  {
         do {
-            _ = try await underlyingClient.object.patch(bucket: bucket, object: path, metadata: metadata, queryParameters: nil).get()
+            try await withGCSClient { underlyingClient in
+                _ = try await underlyingClient.object.patch(bucket: bucket, object: path, metadata: metadata, queryParameters: nil).get()
+            }
         } catch {
             throw StorageError.setMetadataFailed(error: error)
         }
@@ -47,8 +63,10 @@ public struct Storage<MetadataType: Metadata>: StorageProtocol {
     
     public func getMetadata(path: String) async throws -> [String: String]? {
         do {
-            let object = try await underlyingClient.object.get(bucket: bucket, object: path, queryParameters: nil).get()
-            return object.metadata
+            return try await withGCSClient { underlyingClient in
+                let object = try await underlyingClient.object.get(bucket: bucket, object: path, queryParameters: nil).get()
+                return object.metadata
+            }
         } catch {
             throw StorageError.setMetadataFailed(error: error)
         }
@@ -56,13 +74,15 @@ public struct Storage<MetadataType: Metadata>: StorageProtocol {
     
     public func download(path: String) async throws -> DownloadResult? {
         do {
-            let object = try await underlyingClient.object.get(bucket: bucket, object: path, queryParameters: nil).get()
-            
-            let response = try await underlyingClient.object.getMedia(bucket: bucket, object: path, range: nil, queryParameters: nil).get()
-            guard let data = response.data, let contentType = object.contentType else {
-                return nil
+            return try await withGCSClient { underlyingClient in
+                let object = try await underlyingClient.object.get(bucket: bucket, object: path, queryParameters: nil).get()
+                
+                let response = try await underlyingClient.object.getMedia(bucket: bucket, object: path, range: nil, queryParameters: nil).get()
+                guard let data = response.data, let contentType = object.contentType else {
+                    return nil
+                }
+                return .init(contentType: contentType, data: data)
             }
-            return .init(contentType: contentType, data: data)
         } catch {
             throw StorageError.downloadFailed(error: error)
         }
@@ -80,3 +100,20 @@ public struct Storage<MetadataType: Metadata>: StorageProtocol {
     }
     
 }
+
+
+extension Storage {
+    
+    public static func fromEnvironment(bucket: String, numberOfThreads: Int = 1) throws -> Self? {
+        let projectId = "ai-jiabao-com"
+        
+        guard let credentialsFile: String = ProcessInfo.processInfo.environment["GCS_CREDENTIALSFILE"] else {
+            return nil
+        }
+        
+        let eventLoopGroup = MultiThreadedEventLoopGroup(numberOfThreads: numberOfThreads)
+        
+        return try .init(eventLoopGroup: eventLoopGroup, projectId: projectId, bucket: bucket, credentialsFile: credentialsFile)
+    }
+}
+

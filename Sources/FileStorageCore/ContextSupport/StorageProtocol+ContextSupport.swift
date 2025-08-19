@@ -8,7 +8,6 @@ import Foundation
 
 extension StorageProtocol where MetadataType: ContextMetadata {
     public func upload(data: Data, contextInfo: ContextStorageInfo, contentType: String, metadata: MetadataType, limit: FileSizeLimit) async throws -> ContextUploadedResult? {
-        let encoder = JSONEncoder()
         let documentId = try data.sha256(extra: contextInfo, metadata)
         
         let folderPath = contextInfo.folderPath(metadata: metadata)
