@@ -9,18 +9,19 @@ import Foundation
 
 public protocol StorageProtocol {
     associatedtype MetadataType: Metadata
-    func upload(data: Data, path: String, contentType: String, metadata: [String: String]?, limit: FileSizeLimit) async throws -> String?
+    func upload(data: Data, path: String, contentType: String, metadata: [String: String]?, limit: FileSizeLimit) async throws -> UploadedResult?
     
     func setMetadata(_ metadata: [String: String], path: String) async throws
     func getMetadata(path: String) async throws -> [String: String]?
-    func download(path: String) async throws -> Data?
+    func download(path: String) async throws -> DownloadResult?
     func markDelete(path: String) async throws
     func isMarkedDeleted(path: String) async throws -> Bool
 }
 
+
+
 extension StorageProtocol {
-    public func upload(data: Data, path: String, contentType: String, metadata: MetadataType, limit: FileSizeLimit) async throws -> String? {
-        
+    public func upload(data: Data, path: String, contentType: String, metadata: MetadataType, limit: FileSizeLimit) async throws -> UploadedResult? {
         return try await upload(data: data, path: path, contentType: contentType, metadata: metadata.represented, limit: limit)
     }
     
@@ -56,6 +57,7 @@ extension StorageProtocol {
         }
     }
     
-    
-    
 }
+
+
+

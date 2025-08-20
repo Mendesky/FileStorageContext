@@ -22,13 +22,17 @@ let package = Package(
             targets: ["Demo"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/Mendesky/google-cloud-kit.git", branch: "main")
+        .package(url: "https://github.com/Mendesky/google-cloud-kit.git", branch: "main"),
+        .package(url: "https://github.com/apple/swift-crypto.git", from: "3.0.0")
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
-            name: "FileStorageCore"
+            name: "FileStorageCore",
+            dependencies: [
+                .product(name: "Crypto", package: "swift-crypto")
+            ]
         ),
         .target(
             name: "GoogleCloudStorage",
