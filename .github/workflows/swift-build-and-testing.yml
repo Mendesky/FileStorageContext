@@ -30,7 +30,7 @@ jobs:
         env:
           MY_SECRET_VARIABLE: ${{ secrets.GCS_CREDENTIALS }} # Accessing the secret named API_KEY
         run: |
-          echo ${{ secrets.GCS_CREDENTIALS }} > GCS.cre
+          echo $MY_SECRET_VARIABLE > GCS.cre
       - name: Build and tests
         run: swift test -v --no-parallel
         env:
