@@ -27,7 +27,7 @@ jobs:
                   ${{ secrets.DDDKIT_ACCESS_TOKEN }}      
       - run: ulimit -n 10000
       - name: Build and tests
-        run: 
+        run: |
           echo ${{ secrets.GCS_CREDENTIALS }} > GCS.cre
           swift test -v --no-parallel
         env:
