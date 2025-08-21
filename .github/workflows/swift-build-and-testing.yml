@@ -26,12 +26,9 @@ jobs:
             ssh-private-key: |
                   ${{ secrets.DDDKIT_ACCESS_TOKEN }}      
       - run: ulimit -n 10000
-      - name: Dump Environment Variable to File
-        env:
-          GCS_CREDENTIALS: ${{ secrets.GCS_CREDENTIALS }}
-        run: |
-          echo "$GCS_CREDENTIALS" > GCS.cre
       - name: Build and tests
-        run: swift test -v --no-parallel
+        run: 
+          echo ${{ secrets.GCS_CREDENTIALS }} > GCS.cre
+          swift test -v --no-parallel
         env:
           GCS_CREDENTIALSFILE: "GCS.cre" 
