@@ -13,6 +13,10 @@ import NIO
 @Test("Test upload plain text.")
 func uploadPlainText() async throws {
     print(ProcessInfo.processInfo.environment["GCS_CREDENTIALSFILE"])
+    
+    
+    let CREDENTIALS = try String(contentsOf: .init(filePath: ProcessInfo.processInfo.environment["GCS_CREDENTIALSFILE"]!), encoding: .utf8)
+    print("CREDENTIALS:", CREDENTIALS)
     guard let storage = try Storage<StandardContextMetadata>.fromEnvironment(bucket: "mendesky-resource", numberOfThreads: 1) else {
         Issue.record("Failed to create storage client.")
         return
