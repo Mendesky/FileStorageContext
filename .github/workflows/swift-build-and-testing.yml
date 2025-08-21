@@ -17,23 +17,23 @@ jobs:
         python: ["3.10"]
     runs-on: ${{ matrix.os }}
     steps:
-      # - uses: SwiftyLab/setup-swift@latest
-      #   with:
-      #      swift-version: ${{ matrix.swift }}
-      # - uses: actions/checkout@v4
-      # - uses: webfactory/ssh-agent@v0.9.0
-      #   with:
-      #       ssh-private-key: |
-      #             ${{ secrets.DDDKIT_ACCESS_TOKEN }}      
-      # - run: ulimit -n 10000
+      - uses: SwiftyLab/setup-swift@latest
+        with:
+           swift-version: ${{ matrix.swift }}
+      - uses: actions/checkout@v4
+      - uses: webfactory/ssh-agent@v0.9.0
+        with:
+            ssh-private-key: |
+                  ${{ secrets.DDDKIT_ACCESS_TOKEN }}      
+      - run: ulimit -n 10000
       - name: Use secret
         env:
           MY_SECRET_VARIABLE: ${{ secrets.GCS_CREDENTIALS }} # Accessing the secret named API_KEY
         run: |
           echo "Using secret value: $MY_SECRET_VARIABLE"
-      # - name: Build and tests
-      #   run: |
-      #     echo ${{ secrets.GCS_CREDENTIALS }} > GCS.cre
-      #     swift test -v --no-parallel
-      #   env:
-      #     GCS_CREDENTIALSFILE: "GCS.cre" 
+      - name: Build and tests
+        run: |
+          echo ${{ secrets.GCS_CREDENTIALS }} > GCS.cre
+          swift test -v --no-parallel
+        env:
+          GCS_CREDENTIALSFILE: "GCS.cre" 
