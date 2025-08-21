@@ -34,4 +34,4 @@ jobs:
       - name: Build and tests
         run: swift test -v --no-parallel
         env:
-          GCS_CREDENTIALSFILE: GCS.cre 
+          GCS_CREDENTIALSFILE: "GCS.cre" 
