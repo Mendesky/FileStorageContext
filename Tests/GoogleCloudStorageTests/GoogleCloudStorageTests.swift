@@ -12,10 +12,12 @@ import NIO
 
 @Test("Test upload plain text.")
 func uploadPlainText() async throws {
+    print(ProcessInfo.processInfo.environment["GCS_CREDENTIALSFILE"])
     guard let storage = try Storage<StandardContextMetadata>.fromEnvironment(bucket: "mendesky-resource", numberOfThreads: 1) else {
         Issue.record("Failed to create storage client.")
         return
     }
+    
     let data = "hello2".data(using: .utf8)!
     let contextInfo = ContextStorageInfo.init(context: "QuotingContext", category: "revenueQuotingProof")
     let metadata = StandardContextMetadata(originalName: "hello6.txt", context: "QuotingContext", aggregateRoot: "QuotingCase", aggregateRootId: "1234")
