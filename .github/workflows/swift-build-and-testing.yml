@@ -32,6 +32,6 @@ jobs:
         run: |
           echo "$GCS_CREDENTIALS" > GCS.cre
       - name: Build and tests
-        run: swift test -v --enable-code-coverage --no-parallel
+        run: swift test -v --no-parallel
         env:
           GCS_CREDENTIALSFILE: GCS.cre 
