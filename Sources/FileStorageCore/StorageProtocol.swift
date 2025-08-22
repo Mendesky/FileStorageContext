@@ -14,6 +14,7 @@ public protocol StorageProtocol {
     func setMetadata(_ metadata: [String: String], path: String) async throws
     func getMetadata(path: String) async throws -> [String: String]?
     func download(path: String) async throws -> DownloadResult?
+    func download(mediaLink: String) async throws -> DownloadResult?
     func markDelete(path: String) async throws
     func isMarkedDeleted(path: String) async throws -> Bool
 }
