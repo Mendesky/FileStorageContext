@@ -22,7 +22,7 @@ let package = Package(
             targets: ["Demo"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/Mendesky/google-cloud-kit.git", branch: "main"),
+        .package(url: "https://github.com/Mendesky/google-cloud-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/apple/swift-crypto.git", from: "3.0.0")
     ],
     targets: [
