@@ -24,8 +24,10 @@ extension StorageProtocol where MetadataType: ContextMetadata {
         return try await download(path: path)
     }
     
-    public func markDelete(contextInfo: ContextStorageInfo, metadata: MetadataType) async throws {
-        return try await markDelete(path: contextInfo.folderPath(metadata: metadata))
+    public func markDelete(documentId: String, contextInfo: ContextStorageInfo, metadata: MetadataType) async throws {
+        let folderPath = contextInfo.folderPath(metadata: metadata)
+        let path = "\(folderPath)/\(documentId)"
+        return try await markDelete(path: path)
     }
     
     
