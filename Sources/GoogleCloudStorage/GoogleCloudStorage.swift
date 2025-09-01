@@ -1,16 +1,18 @@
 import Foundation
 @_exported import FileStorageCore
-import Core
+@preconcurrency import Core
 @preconcurrency import Storage
 import AsyncHTTPClient
 import NIO
+import Logging
 
-public struct Storage<MetadataType: Metadata>: StorageProtocol {
+public struct Storage<MetadataType: Metadata>: StorageProtocol, Sendable {
     let projectId: String
     let bucket: String
     let eventLoopGroup: EventLoopGroup
     let credentialsConfiguration: GoogleCloudCredentialsConfiguration
     let cloudStorageConfiguration: GoogleCloudStorageConfiguration
+    let logger = Logger(label: "[GoogleClodud.Storage]")
     
     public init(eventLoopGroup: EventLoopGroup, projectId: String, bucket: String, cloudStorageConfiguration: GoogleCloudStorageConfiguration = .default(), credentialsFile: String) throws {
         self.projectId = projectId
@@ -22,15 +24,16 @@ public struct Storage<MetadataType: Metadata>: StorageProtocol {
     
     private func withGCSClient<Response>(_ handler:(_ underlyingClient: GoogleCloudStorageClient) async throws ->Response) async throws ->Response{
         let httpClient = HTTPClient(eventLoopGroup: eventLoopGroup)
-        
+        defer {
+            httpClient.shutdown(queue: .main) { error in
+                logger.error("The error happened while shutting down the httpClient: \(String(describing: error)).")
+            }
+        }
         
         let client = try GoogleCloudStorageClient(credentials: credentialsConfiguration, storageConfig: cloudStorageConfiguration, httpClient: httpClient, eventLoop: eventLoopGroup.next())
         let response = try await handler(client)
-        try await httpClient.shutdown()
         return response
     }
-    
-    
     
     public func upload(data: Data, path: String, contentType: String, metadata: [String: String]? = nil, limit: FileSizeLimit) async throws -> UploadedResult? {
         
