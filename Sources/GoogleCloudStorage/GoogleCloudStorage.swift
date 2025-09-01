@@ -26,7 +26,9 @@ public struct Storage<MetadataType: Metadata>: StorageProtocol, Sendable {
         let httpClient = HTTPClient(eventLoopGroup: eventLoopGroup)
         defer {
             httpClient.shutdown(queue: .main) { error in
-                logger.error("The error happened while shutting down the httpClient: \(String(describing: error)).")
+                if let error {
+                    logger.error("The error happened while shutting down the httpClient: \(String(describing: error)).")
+                }
             }
         }
         
