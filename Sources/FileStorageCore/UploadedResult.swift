@@ -9,7 +9,7 @@ public struct UploadedResult {
     public let path: String
     public let mediaLink: String
     
-    package init(path: String, mediaLink: String) {
+    public init(path: String, mediaLink: String) {
         self.path = path
         self.mediaLink = mediaLink
     }

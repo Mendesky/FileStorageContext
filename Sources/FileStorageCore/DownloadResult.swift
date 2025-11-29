@@ -10,7 +10,7 @@ public struct DownloadResult {
     public let contentType: String
     public let data: Data
     
-    package init(contentType: String, data: Data) {
+    public init(contentType: String, data: Data) {
         self.contentType = contentType
         self.data = data
     }
