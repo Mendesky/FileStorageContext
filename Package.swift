@@ -53,6 +53,13 @@ let package = Package(
                 "GoogleCloudStorage"
             ]
         ),
+        // 不碰網路的純函式測試；GoogleCloudStorageTests 需要真實 GCS 憑證，跑不到雜湊這層。
+        .testTarget(
+            name: "FileStorageCoreTests",
+            dependencies: [
+                "FileStorageCore"
+            ]
+        ),
     ],
     swiftLanguageModes: [
         .v5
