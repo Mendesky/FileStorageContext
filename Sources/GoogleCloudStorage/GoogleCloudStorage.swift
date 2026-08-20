@@ -73,7 +73,7 @@ public struct Storage<MetadataType: Metadata>: StorageProtocol, Sendable {
                 return object.metadata
             }
         } catch {
-            throw StorageError.setMetadataFailed(error: error)
+            throw StorageError.getMetadataFailed(error: error)
         }
     }
     
