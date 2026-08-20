@@ -3,6 +3,7 @@ package enum StorageError: Error {
     case uploadUnknownedFailed(message: String)
     case setMetadataFailed(error: Error)
     case getMetadataFailed(error: Error)
+    case getSizeFailed(error: Error)
     case downloadFailed(error: Error)
     case markDeletedFailed(error: Error)
     case invalidFileData

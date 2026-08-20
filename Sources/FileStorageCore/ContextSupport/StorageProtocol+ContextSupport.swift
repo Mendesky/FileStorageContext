@@ -27,6 +27,14 @@ extension StorageProtocol where MetadataType: ContextMetadata {
         return try await download(path: path)
     }
     
+    /// 與 `download(documentId:contextInfo:metadata:)` **必須組出同一條 path** ——
+    /// 兩者若漂移，就會變成「查 A 的大小、下載 B 的內容」。`ContextSupportSizeTests` 鎖住這件事。
+    public func sizeInBytes(documentId: String, contextInfo: ContextStorageInfo, metadata: MetadataType) async throws -> Int64? {
+        let folderPath = contextInfo.folderPath(metadata: metadata)
+        let path = "\(folderPath)/\(documentId)"
+        return try await sizeInBytes(path: path)
+    }
+
     public func markDelete(documentId: String, contextInfo: ContextStorageInfo, metadata: MetadataType) async throws {
         let folderPath = contextInfo.folderPath(metadata: metadata)
         let path = "\(folderPath)/\(documentId)"

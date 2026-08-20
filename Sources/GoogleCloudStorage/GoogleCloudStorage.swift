@@ -76,6 +76,23 @@ public struct Storage<MetadataType: Metadata>: StorageProtocol, Sendable {
             throw StorageError.getMetadataFailed(error: error)
         }
     }
+
+    /// GCS 的 `objects.get` 把大小放在 `StorageObject.size`，型別是**字串**（JSON API 以十進位字串
+    /// 序列化 unsigned long）。解不出來回 nil，不 throw —— 呼叫端只需知道「拿不到」。
+    ///
+    /// 與 `getMetadata` 打的是同一支 API，差別只在取哪個欄位：那支回使用者自訂的 `object.metadata`，
+    /// 這支回物件本身的屬性。**兩者刻意不合併**：自訂 metadata 會被 `setMetadata` 寫回 GCS，
+    /// 把 size 這種物件屬性混進那個 dictionary，遲早會被當成自訂欄位寫回去。
+    public func sizeInBytes(path: String) async throws -> Int64? {
+        do {
+            return try await withGCSClient { underlyingClient in
+                let object = try await underlyingClient.object.get(bucket: bucket, object: path, queryParameters: nil).get()
+                return object.size.flatMap(Int64.init)
+            }
+        } catch {
+            throw StorageError.getSizeFailed(error: error)
+        }
+    }
     
     public func download(path: String) async throws -> DownloadResult? {
         do {
